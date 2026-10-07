@@ -25,7 +25,19 @@ then reopen PowerShell.
 | You do | What happens |
 |---|---|
 | Left-click the frog | He says something |
-| Right-click the frog | Menu: AI quips, croak sound, pranks, personality, quit |
+| Drag the frog | You pick him up; let go and he falls down (and complains) |
+| Right-click the frog | Menu: AI quips, croak sound, mouse chasing, reminders, pranks, personality, quit |
+
+He walks along the bottom of **all your monitors** and hops from one to the next.
+
+## Mouse and reminders
+
+- **Maus jagen** (chase the mouse): when your mouse pointer comes close, he snaps at it
+  with his tongue or hops away in a huff.
+- **Erinnerungen** (reminders): once an hour he reminds you to drink something,
+  stretch or rest your eyes.
+
+Both can be switched on and off in the right-click menu.
 
 ## Pranks
 
@@ -95,6 +107,8 @@ src/frog/
   model.py         The frog as plain data (position, direction, state)
   pixel_art.py     The frog's pixel art (sitting and jumping)
   quips.py         Built-in quips
+  reactions.py     Reactions to the mouse, being picked up, and reminders
+  screens.py       Where the frog may walk (all monitors)
   ai_quips.py      Quips from Claude, fetched in the background
   storage.py       Remembers settings such as AI on/off
   sound.py         The croak sound
@@ -116,6 +130,9 @@ tests/             Tests
 - **Croak length:** `sound_duration_ms` in `config.py`.
 - **Break length:** `break_min_s` and `break_max_s` in `config.py`.
 - **Different playground:** `playground` in `config.py`.
+- **Reminder interval:** `reminder_interval_min` in `config.py`.
+- **Mouse chasing:** `chase_radius` and `chase_cooldown_s` in `config.py`.
+- **Reminder lines and mouse reactions:** listed in `reactions.py`.
 - **New action:** subclass `Action` in `actions/` and register it in `actions/registry.py`.
 
 Every file action must go through `safety.py`, so the frog can never touch your real files.

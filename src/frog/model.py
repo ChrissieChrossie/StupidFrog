@@ -8,6 +8,8 @@ from enum import Enum, auto
 
 # Share of each jump spent crouching on the ground before take-off.
 GROUND_SHARE = 0.3
+GRAVITY = 2500.0  # Pixels per second squared, used when the frog is dropped
+LANDING_REST_S = 1.5  # How long the frog sits dazed after being dropped
 
 
 class State(Enum):
@@ -17,6 +19,8 @@ class State(Enum):
     LEAVING = auto()  # Hops off the screen to take a break
     AWAY = auto()  # Off screen; comes back by itself when the break is over
     RETURNING = auto()  # Hops back onto the screen
+    HELD = auto()  # Picked up with the mouse
+    FALLING = auto()  # Dropped; falls down to the ground
 
 
 MOVING_STATES = frozenset({State.WALKING, State.LEAVING, State.RETURNING})
@@ -33,10 +37,17 @@ class Frog:
     phase: float = 0.0  # 0..1, progress within the current jump
     rest_left_s: float = 0.0
     away_left_s: float = 0.0
+    lift: float = 0.0  # Height of the window above the ground while held or falling
+    fall_speed: float = 0.0
 
     @property
     def airborne(self) -> bool:
         return self.state in MOVING_STATES and self.phase >= GROUND_SHARE
+
+    @property
+    def legs_out(self) -> bool:
+        """True while jumping, dangling from the mouse or falling."""
+        return self.airborne or self.state in (State.HELD, State.FALLING)
 
     @property
     def height(self) -> float:
@@ -62,6 +73,8 @@ class Frog:
             if self.away_left_s <= 0:
                 self._reenter(min_x, max_x, margin)
             return False
+        if self.state is State.FALLING:
+            return self._fall(dt, min_x, max_x)
         if self.state not in MOVING_STATES:
             return False
 
@@ -98,6 +111,19 @@ class Frog:
         self.state = State.LEAVING
         self.away_left_s = break_seconds
 
+    def pick_up(self) -> None:
+        self.state = State.HELD
+        self.phase = 0.0
+
+    def hold_at(self, x: float, lift: float) -> None:
+        """Follow the mouse while held. The frog can not be pushed below the ground."""
+        self.x = x
+        self.lift = max(0.0, lift)
+
+    def drop(self) -> None:
+        self.state = State.FALLING
+        self.fall_speed = 0.0
+
     def start_walking(self) -> None:
         self.state = State.WALKING
         self.rest_left_s = 0.0
@@ -121,3 +147,14 @@ class Frog:
             self.x, self.direction = min_x - margin, 1
         self.state = State.RETURNING
         self.phase = 0.0
+
+    def _fall(self, dt: float, min_x: float, max_x: float) -> bool:
+        """Fall down; returns True on landing. The frog then sits dazed for a moment."""
+        self.x = min(max(self.x, min_x), max_x)
+        self.fall_speed += GRAVITY * dt
+        self.lift -= self.fall_speed * dt
+        if self.lift > 0:
+            return False
+        self.lift = 0.0
+        self.rest(LANDING_REST_S)
+        return True
