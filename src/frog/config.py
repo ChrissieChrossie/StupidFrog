@@ -13,7 +13,7 @@ class Settings:
     # Window
     window_width: int = 240
     window_height: int = 240
-    bottom_margin: int = 48  # Leaves room for the Windows taskbar
+    bottom_margin: int = 48  # Room for the taskbar when the work area is unknown (not Windows)
     transparent_color: str = "#ff00ff"  # This color is rendered fully transparent
 
     # Movement
@@ -37,6 +37,9 @@ class Settings:
     speech_bubble_s: float = 4.0
     break_min_s: float = 45.0  # How long the frog stays away when it takes a break
     break_max_s: float = 90.0
+    reminder_interval_min: float = 60.0  # "Drink something!" and the like
+    chase_radius: int = 180  # The frog reacts when the mouse comes this close (pixels)
+    chase_cooldown_s: float = 20.0  # Minimum time between two reactions to the mouse
 
     # Sound
     sound_enabled: bool = True  # Initial value; the context menu remembers the user's choice

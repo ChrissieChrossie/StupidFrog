@@ -20,7 +20,7 @@ TAG_BUBBLE = "bubble"
 def draw_frog(canvas: tk.Canvas, frog: Frog, center_x: int, ground_y: int, pixel: int) -> None:
     """Redraw the pixel frog. `ground_y` is the height of its feet."""
     canvas.delete(TAG_FROG)
-    frame = frame_for(frog.airborne, frog.direction)
+    frame = frame_for(frog.legs_out, frog.direction)
     left = center_x - WIDTH * pixel // 2
     top = ground_y - HEIGHT * pixel - int(frog.height)
 

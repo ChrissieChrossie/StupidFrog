@@ -124,3 +124,38 @@ def test_does_not_bounce_off_the_edge_while_leaving():
         frog.step(0.05, 0, 1000, margin=240)
     assert frog.x > 1000
     assert frog.direction == 1
+
+
+def test_picked_up_frog_follows_the_mouse_and_falls_when_dropped():
+    frog = Frog(x=100, speed=10)
+    frog.pick_up()
+    frog.hold_at(500, 300)
+    assert (frog.state, frog.x, frog.lift) == (State.HELD, 500, 300)
+    assert frog.legs_out
+
+    frog.step(1.0, 0, 1000)  # Held frogs do not move by themselves
+    assert frog.x == 500 and frog.lift == 300
+
+    frog.drop()
+    steps = 0
+    while not frog.step(0.02, 0, 1000):
+        steps += 1
+        assert steps < 100, "the frog never landed"
+    assert frog.lift == 0
+    assert frog.state is State.RESTING  # Dazed for a moment, then hops on
+
+
+def test_held_frog_can_not_go_below_the_ground():
+    frog = Frog(x=0, speed=10)
+    frog.pick_up()
+    frog.hold_at(10, -50)
+    assert frog.lift == 0
+
+
+def test_dropped_frog_lands_on_the_screen():
+    frog = Frog(x=0, speed=10)
+    frog.pick_up()
+    frog.hold_at(5000, 10)
+    frog.drop()
+    frog.step(0.5, 0, 1000)
+    assert frog.x == 1000

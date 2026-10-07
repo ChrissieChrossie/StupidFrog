@@ -55,21 +55,28 @@ class FrogWindow:
         self._menu_vars: list[tk.BooleanVar] = []  # Keep references so tkinter keeps them
 
     @property
-    def screen_width(self) -> int:
-        return self.root.winfo_screenwidth()
+    def screen_size(self) -> Point:
+        """Size of the primary screen. Only used when the monitors are unknown."""
+        return self.root.winfo_screenwidth(), self.root.winfo_screenheight()
 
-    @property
-    def top_y(self) -> int:
-        """Screen y coordinate of the window's top edge."""
+    def move_to(self, x: float, y: float) -> None:
         s = self.settings
-        return self.root.winfo_screenheight() - s.window_height - s.bottom_margin
+        self.root.geometry(f"{s.window_width}x{s.window_height}+{int(x)}+{int(y)}")
 
-    def move_to(self, x: float) -> None:
-        s = self.settings
-        self.root.geometry(f"{s.window_width}x{s.window_height}+{int(x)}+{self.top_y}")
+    def pointer(self) -> Point:
+        """Current mouse position in screen coordinates."""
+        return self.root.winfo_pointerxy()
 
-    def on_left_click(self, callback: Callable[[], None]) -> None:
-        self.canvas.bind("<Button-1>", lambda _event: callback())
+    def on_mouse(
+        self,
+        press: Callable[[int, int], None],
+        drag: Callable[[int, int], None],
+        release: Callable[[int, int], None],
+    ) -> None:
+        """Left mouse button events on the frog, in screen coordinates."""
+        self.canvas.bind("<ButtonPress-1>", lambda e: press(e.x_root, e.y_root))
+        self.canvas.bind("<B1-Motion>", lambda e: drag(e.x_root, e.y_root))
+        self.canvas.bind("<ButtonRelease-1>", lambda e: release(e.x_root, e.y_root))
 
     def build_menu(
         self,
@@ -135,12 +142,13 @@ class FrogWindow:
         start: Point,
         target: Point,
         on_hit: Callable[[], None],
+        bounds: tuple[int, int, int, int],
         steps: int = 8,
         ms_per_step: int = 30,
     ) -> None:
         """Animate a tongue across the screen from `start` to `target`.
 
-        A transparent full-screen overlay is shown briefly for this.
+        A transparent overlay covering `bounds` (all monitors) is shown briefly.
         Clicks pass straight through its transparent parts.
         """
         s = self.settings
@@ -153,9 +161,12 @@ class FrogWindow:
             log.warning("Tongue overlay not supported here; pressing the button directly.")
             on_hit()
             return
-        width = self.root.winfo_screenwidth()
-        height = self.root.winfo_screenheight()
-        overlay.geometry(f"{width}x{height}+0+0")
+        left, top, right, bottom = bounds
+        width, height = right - left, bottom - top
+        # Monitors left of or above the main one have negative coordinates.
+        overlay.geometry(f"{width}x{height}+{left}+{top}")
+        start = (start[0] - left, start[1] - top)
+        target = (target[0] - left, target[1] - top)
         canvas = tk.Canvas(
             overlay, width=width, height=height, bg=s.transparent_color, highlightthickness=0
         )

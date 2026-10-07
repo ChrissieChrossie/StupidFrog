@@ -4,7 +4,8 @@ Everything here is harmless and reversible:
 - Restore minimized windows.
 - Minimize, maximize or restore windows.
 - Briefly hide the desktop icons (the app shows them again).
-- Move a desktop icon (the app puts it back).
+- Move a desktop icon.
+- List the monitors (read only).
 On other systems `is_available()` simply returns False.
 """
 
@@ -85,6 +86,29 @@ if IS_WINDOWS:
     user32.SendMessageW.restype = wintypes.LPARAM
     user32.GetClientRect.argtypes = [wintypes.HWND, ctypes.POINTER(wintypes.RECT)]
     user32.ClientToScreen.argtypes = [wintypes.HWND, ctypes.POINTER(wintypes.POINT)]
+
+    class MONITORINFO(ctypes.Structure):
+        _fields_ = [
+            ("cbSize", wintypes.DWORD),
+            ("rcMonitor", wintypes.RECT),
+            ("rcWork", wintypes.RECT),
+            ("dwFlags", wintypes.DWORD),
+        ]
+
+    MONITORENUMPROC = ctypes.WINFUNCTYPE(
+        wintypes.BOOL,
+        wintypes.HMONITOR,
+        wintypes.HDC,
+        ctypes.POINTER(wintypes.RECT),
+        wintypes.LPARAM,
+    )
+    user32.EnumDisplayMonitors.argtypes = [
+        wintypes.HDC,
+        ctypes.POINTER(wintypes.RECT),
+        MONITORENUMPROC,
+        wintypes.LPARAM,
+    ]
+    user32.GetMonitorInfoW.argtypes = [wintypes.HMONITOR, ctypes.POINTER(MONITORINFO)]
 
     kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
     kernel32.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
@@ -219,6 +243,35 @@ def button_position(hwnd: int, button: str) -> tuple[int, int] | None:
     right = rect.right - INVISIBLE_BORDER
     top = rect.top + (INVISIBLE_BORDER if is_maximized(hwnd) else 1)
     return int(right - BUTTON_WIDTH * BUTTON_OFFSETS[button]), int(top + BUTTON_HEIGHT / 2)
+
+
+# --- Monitors ---------------------------------------------------------------------
+
+Rect = tuple[int, int, int, int]  # (left, top, right, bottom)
+
+
+def monitors() -> list[tuple[Rect, Rect]]:
+    """(full area, work area) of every monitor. The work area leaves out the taskbar."""
+    if not IS_WINDOWS:
+        return []
+    found: list[tuple[Rect, Rect]] = []
+
+    @MONITORENUMPROC
+    def collect(hmonitor, _hdc, _rect, _lparam):
+        info = MONITORINFO()
+        info.cbSize = ctypes.sizeof(MONITORINFO)
+        if user32.GetMonitorInfoW(hmonitor, ctypes.byref(info)):
+            area, work = info.rcMonitor, info.rcWork
+            found.append(
+                (
+                    (area.left, area.top, area.right, area.bottom),
+                    (work.left, work.top, work.right, work.bottom),
+                )
+            )
+        return True
+
+    user32.EnumDisplayMonitors(None, None, collect, 0)
+    return found
 
 
 # --- Desktop icons --------------------------------------------------------------
