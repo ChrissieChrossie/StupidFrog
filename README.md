@@ -1,135 +1,124 @@
-# Frosch 🐸
+# Stupid Frog 🐸
 
-Ein frecher Frosch läuft über deinen Bildschirm.
-Er macht Quatsch und sagt doofe Sachen.
+A cheeky pixel frog that hops across your Windows desktop.
+He plays pranks and makes sarcastic comments.
 
-## Starten
+> The frog speaks **German**. Menu entries and folder names he creates are German too.
 
-**Einfach:** Doppelklick auf `start.bat`.
+## Getting started
 
-**Richtig (empfohlen):** Einmal einrichten, in PowerShell im Ordner `StupidFrog`:
+**Quick:** double-click `start.bat`.
+
+**Recommended:** set it up once, in PowerShell inside the `StupidFrog` folder:
 
 ```powershell
 py -m venv .venv
 .venv\Scripts\python -m pip install -e ".[dev]"
 ```
 
-Danach startest du ihn mit `start.bat`.
-Wird `py` nicht gefunden, fehlt Python: `winget install Python.Python.3.12`,
-dann PowerShell neu öffnen.
+Then start him with `start.bat`.
+If `py` is not found, Python is missing: `winget install Python.Python.3.12`,
+then reopen PowerShell.
 
-## Bedienen
+## Controls
 
-| Was du machst       | Was passiert            |
-|---------------------|-------------------------|
-| Linksklick auf Frosch  | Er sagt einen Spruch |
-| Rechtsklick auf Frosch | Menü: KI, Quak-Ton, Streiche, Charakter, Beenden |
+| You do | What happens |
+|---|---|
+| Left-click the frog | He says something |
+| Right-click the frog | Menu: AI quips, croak sound, pranks, personality, quit |
 
-## Streiche
+## Pranks
 
-Der Frosch kann ab und zu Quatsch auf deinem Desktop machen:
+Now and then the frog messes with your desktop:
 
-| Streich | Was passiert | Rückgängig |
+| Prank (menu entry) | What happens | How to undo |
 |---|---|---|
-| Minimierte Fenster öffnen | Er holt ein verstecktes Fenster nach vorne | Einfach wieder minimieren |
-| Fenster-Knöpfe mit der Zunge drücken | Er leckt an Minimieren oder Maximieren | Fenster wieder öffnen oder verkleinern |
-| Desktop-Symbole verstecken | Alle Symbole sind kurz weg | Nach 5 Sekunden sind sie wieder da |
-| Desktop-Symbole verschieben | Er zeigt kurz den Desktop, schubst ein Symbol mit der Zunge woanders hin und öffnet dann die Fenster wieder | Symbol selbst zurückziehen |
-| Dinge in Ordner packen | Er räumt Dateien in die "Froschkiste" | Er kippt sie später wieder aus |
-| Ab und zu Pause machen | Er hüpft aus dem Bild und ist kurz weg | Er kommt nach 45 bis 90 Sekunden von selbst zurück |
+| Minimierte Fenster öffnen | Brings a minimized window back to the front | Minimize it again |
+| Fenster-Knöpfe mit der Zunge drücken | Licks the minimize or maximize button of a window | Restore or resize the window |
+| Desktop-Symbole verstecken | Hides all desktop icons | They come back after 5 seconds |
+| Desktop-Symbole verschieben | Shows the desktop, flicks an icon somewhere else with his tongue, then reopens your windows | Drag the icon back yourself |
+| Dinge in Ordner packen | Tidies files into a "Froschkiste" (frog box) folder | He tips the box out again later |
+| Ab und zu Pause machen | Hops off the screen and takes a break | He comes back after 45 to 90 seconds |
 
-Bei jedem Streich sagt er etwas dazu.
+He comments on every prank.
 
-**An- und ausschalten:** Rechtsklick auf den Frosch, dann "Streiche".
-Jeder Streich hat einen eigenen Haken. Der Frosch merkt sich deine Wahl.
+**Turning pranks on and off:** right-click the frog, then "Streiche".
+Every prank has its own checkbox. The frog remembers your choice.
 
-**Sicherheit:**
-- Dateien fasst er **nur** im Ordner `Frosch-Spielwiese` in deinem Benutzer-Ordner an.
-- Ist der Ordner leer, legt er selbst ein paar Spaß-Dateien hinein.
-- Er löscht und überschreibt nie etwas.
-- Beim Beenden holt er versteckte Symbole sofort zurück.
+**Safety:**
+- He only touches files inside the `Frosch-Spielwiese` folder in your user folder.
+- If that folder is empty, he puts a few fun files in it.
+- He never deletes or overwrites anything.
+- When you quit, hidden icons and minimized windows come back immediately.
 
-## Sprüche von Claude (KI)
+## Quips from Claude (AI)
 
-Der Frosch kann sich neue Sprüche von Claude holen.
-Ohne Schlüssel oder ohne Internet nimmt er einfach seine feste Liste.
+The frog can fetch fresh quips from Claude.
+Without an API key or internet connection he simply uses his built-in list.
 
-**1. Schlüssel holen**
-- Auf [console.anthropic.com](https://console.anthropic.com) anmelden.
-- Etwas Guthaben aufladen (ein paar Euro reichen sehr lange).
-- Unter "API Keys" einen neuen Schlüssel erstellen und kopieren.
+**1. Get a key**
+- Sign in at [console.anthropic.com](https://console.anthropic.com).
+- Add some credit (a few euros last a long time).
+- Create a new key under "API Keys" and copy it.
 
-**2. Schlüssel speichern** (einmal, in PowerShell):
-
-```powershell
-setx ANTHROPIC_API_KEY "dein-schluessel"
-```
-
-Danach PowerShell **schließen und neu öffnen**.
-Den Schlüssel nie in den Code schreiben und nie weitergeben.
-
-**3. An- und ausschalten**
-- Rechtsklick auf den Frosch, dann "Sprüche von Claude".
-- Der Frosch merkt sich deine Wahl (in `~/.frog/settings.json`).
-
-**4. Charakter beschreiben**
-- Rechtsklick auf den Frosch, dann "Charakter beschreiben ...".
-- Schreib ein paar Sätze, zum Beispiel: "Ein müder Opa-Frosch, der über alles jammert."
-- Auf "Speichern" klicken. Er merkt sich das auch nach einem Neustart.
-- Freche, aber nette Regeln gelten immer, egal welcher Charakter.
-
-Kosten: Er holt immer 5 Sprüche auf einmal mit einem kleinen Modell.
-Das kostet weniger als einen Cent.
-
-Wichtig: Die KI braucht die Einrichtung mit `pip install -e ".[dev]"` von oben.
-
-## Tests
+**2. Store the key** (once, in PowerShell):
 
 ```powershell
-pytest
-ruff check .
+setx ANTHROPIC_API_KEY "your-key"
 ```
 
-## Ordner
+Then **close and reopen** PowerShell.
+Never put the key into the code and never share it.
 
-Code und Kommentare sind auf Englisch. Was der Frosch sagt, bleibt Deutsch.
+**3. Turn it on or off**
+- Right-click the frog, then "Sprüche von Claude".
+- The frog remembers your choice (in `~/.frog/settings.json`).
+
+**4. Describe his personality**
+- Right-click the frog, then "Charakter beschreiben ...".
+- Write a few sentences, for example: "A tired grandpa frog who complains about everything."
+- Click "Speichern" (save). He remembers it after a restart.
+- Cheeky-but-friendly rules always apply, whatever the personality.
+
+Cost: he fetches 5 quips at a time from a small model.
+That costs less than one cent.
+
+The AI needs the `pip install -e ".[dev]"` setup from above.
+
+## Project layout
 
 ```
 src/frog/
-  __main__.py      Startpunkt
-  app.py           Die Spielschleife
-  config.py        Alle Zahlen zum Drehen (Tempo, Größe, Pausen, Spielwiese)
-  model.py         Der Frosch als Daten (Position, Richtung)
-  pixel_art.py     Das Pixelbild vom Frosch (Sitzen und Springen)
-  quips.py         Die festen Sprüche
-  ai_quips.py      Sprüche von Claude, im Hintergrund
-  storage.py       Merkt sich Schalter wie KI an/aus
-  sound.py         Der Quak-Ton
-  windows.py       Helfer für Fenster und Desktop-Symbole (nur Windows)
-  safety.py        Schutz: Dateien nur in der Spielwiese
-  actions/         Was der Frosch tun kann (pranks.py = Streiche)
-  ui/              Fenster und Zeichnung (tkinter)
-src/sounds/        Der Quak-Ton
+  __main__.py      Entry point
+  app.py           Main loop
+  config.py        All tunable values (speed, size, pauses, playground)
+  model.py         The frog as plain data (position, direction, state)
+  pixel_art.py     The frog's pixel art (sitting and jumping)
+  quips.py         Built-in quips
+  ai_quips.py      Quips from Claude, fetched in the background
+  storage.py       Remembers settings such as AI on/off
+  sound.py         The croak sound
+  windows.py       Helpers for windows and desktop icons (Windows only)
+  safety.py        Guard: file actions only inside the playground
+  actions/         What the frog can do (pranks.py = pranks)
+  ui/              Window and drawing (tkinter)
+src/sounds/        The croak sound
 tests/             Tests
 ```
 
-## Erweitern
+## Customizing
 
-- **Frosch umgestalten:** In `pixel_art.py` die Buchstaben ändern.
-- **Neuer Spruch:** In `quips.py` in die Liste schreiben.
-- **Streich-Sprüche:** Stehen oben in jeder Klasse in `actions/pranks.py`.
-- **Pausen zwischen Sprüchen:** In `config.py` die Werte `action_pause_min_s` und `action_pause_max_s`.
-- **Öfter still sitzen:** In `config.py` die Werte `rest_...` ändern.
-- **Länge vom Quak-Ton:** In `config.py` der Wert `sound_duration_ms`.
-- **Länge der Pause:** In `config.py` die Werte `break_min_s` und `break_max_s`.
-- **Andere Spielwiese:** In `config.py` der Wert `playground`.
-- **Neue Aktion:** Klasse in `actions/` bauen, in `actions/registry.py` eintragen.
+- **Redesign the frog:** change the letters in `pixel_art.py`.
+- **New quip:** add it to the list in `quips.py`.
+- **Prank lines:** listed at the top of each class in `actions/pranks.py`.
+- **Pause between actions:** `action_pause_min_s` and `action_pause_max_s` in `config.py`.
+- **Sit still more often:** the `rest_...` values in `config.py`.
+- **Croak length:** `sound_duration_ms` in `config.py`.
+- **Break length:** `break_min_s` and `break_max_s` in `config.py`.
+- **Different playground:** `playground` in `config.py`.
+- **New action:** subclass `Action` in `actions/` and register it in `actions/registry.py`.
 
-## Sicherheit
-
-Der Frosch darf Dateien **nur** im Ordner `Frosch-Spielwiese`
-in deinem Benutzer-Ordner anfassen. Nie deine echten Dateien.
-Dafür gibt es `safety.py`. Jede Datei-Aktion muss das benutzen.
+Every file action must go through `safety.py`, so the frog can never touch your real files.
 
 ## Tests
 
@@ -138,8 +127,8 @@ Dafür gibt es `safety.py`. Jede Datei-Aktion muss das benutzen.
 .venv\Scripts\python -m ruff check .
 ```
 
-Auf GitHub laufen die Tests bei jedem Push von selbst (`.github/workflows/tests.yml`).
+On GitHub the tests run automatically on every push (`.github/workflows/tests.yml`).
 
-## Lizenz
+## License
 
-MIT, siehe `LICENSE`.
+MIT, see `LICENSE`.
