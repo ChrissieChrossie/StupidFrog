@@ -7,7 +7,7 @@ Er macht Quatsch und sagt doofe Sachen.
 
 **Einfach:** Doppelklick auf `start.bat`.
 
-**Richtig (empfohlen):** Einmal einrichten, in PowerShell im Ordner `Stupid Frog`:
+**Richtig (empfohlen):** Einmal einrichten, in PowerShell im Ordner `StupidFrog`:
 
 ```powershell
 py -m venv .venv
