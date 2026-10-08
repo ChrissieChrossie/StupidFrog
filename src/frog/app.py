@@ -10,7 +10,7 @@ import random
 import time
 from collections.abc import Callable
 
-from frog import storage
+from frog import api_key, storage
 from frog.actions import Action, all_actions, pick_action
 from frog.ai_quips import DEFAULT_PERSONALITY, AiQuipSource, ai_available
 from frog.config import Settings
@@ -99,6 +99,7 @@ class FrogApp:
                 for action in self._pranks()
             ],
             on_personality=self.edit_personality,
+            on_api_key=self.edit_api_key,
             on_quit=self.quit,
         )
 
@@ -152,7 +153,7 @@ class FrogApp:
             self.say("KI an! Jetzt wird's richtig frech.")
         else:
             log.warning("AI quips unavailable: %s", reason)
-            self.say("Mir fehlt der Schlüssel. Schau in die README.")
+            self.say("Mir fehlt der Schlüssel. Rechtsklick: API-Schlüssel eingeben.")
 
     def toggle_chase(self, on: bool) -> None:
         self.chase.enabled = on
@@ -179,6 +180,28 @@ class FrogApp:
             self.say("Gemerkt! Ich bin jetzt ein ganz neuer Frosch.")
         else:
             self.say("Gemerkt! Damit ich so rede, muss die KI an sein.")
+
+    def edit_api_key(self) -> None:
+        self.window.api_key_dialog(api_key.masked(api_key.current()), self.save_api_key)
+
+    def save_api_key(self, key: str) -> None:
+        """An empty key removes the stored one."""
+        key = key.strip()
+        if not key:
+            api_key.remove()
+            self.say("Schlüssel weg. Ich nehm wieder meine alten Sprüche.")
+            return
+        if not api_key.looks_valid(key):
+            self.say("Das ist kein Schlüssel. Der fängt mit sk-ant- an.")
+            return
+        remembered = api_key.save(key)
+        if not remembered:
+            log.warning("API key is only used until the frog quits")
+        self.quips.key_changed()
+        if self.quips.enabled:
+            self.say("Schlüssel gemerkt! Jetzt wird's richtig frech.")
+        else:
+            self.say("Schlüssel gemerkt! Schalte noch 'Sprüche von Claude' an.")
 
     # --- Lifecycle ------------------------------------------------------------
 

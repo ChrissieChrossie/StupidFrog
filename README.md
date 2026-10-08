@@ -34,7 +34,7 @@ For a proper download page, push a tag such as `0.3.0`; the .exe is then attache
 Notes:
 - The .exe has no console window. Its log is written to `~/.frog/frog.log`.
 - Windows SmartScreen may warn about an unknown app the first time: "More info" → "Run anyway".
-- AI quips still need the `ANTHROPIC_API_KEY` environment variable (see below).
+- AI quips need your own API key. Enter it in the right-click menu (see below).
 
 ## Controls
 
@@ -42,7 +42,7 @@ Notes:
 |---|---|
 | Left-click the frog | He says something |
 | Drag the frog | You pick him up; let go and he falls down (and complains) |
-| Right-click the frog | Menu: AI quips, croak sound, mouse chasing, reminders, pranks, personality, quit |
+| Right-click the frog | Menu: AI quips, croak sound, mouse chasing, reminders, pranks, personality, API key, quit |
 
 He walks along the bottom of **all your monitors** and hops from one to the next.
 
@@ -89,14 +89,14 @@ Without an API key or internet connection he simply uses his built-in list.
 - Add some credit (a few euros last a long time).
 - Create a new key under "API Keys" and copy it.
 
-**2. Store the key** (once, in PowerShell):
+**2. Store the key** (once):
+- Right-click the frog, then "API-Schlüssel eingeben ...".
+- Paste the key and click "Speichern" (save). It works right away and after a restart.
+- To remove it: open the same dialog, leave the field empty and click "Speichern".
 
-```powershell
-setx ANTHROPIC_API_KEY "your-key"
-```
-
-Then **close and reopen** PowerShell.
-Never put the key into the code and never share it.
+The key is stored as your user environment variable `ANTHROPIC_API_KEY`, exactly like
+`setx ANTHROPIC_API_KEY "your-key"` in PowerShell would do. It never ends up in the code,
+in the .exe or in `settings.json`. Never share it.
 
 **3. Turn it on or off**
 - Right-click the frog, then "Sprüche von Claude".
