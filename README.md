@@ -42,7 +42,7 @@ Notes:
 |---|---|
 | Left-click the frog | He says something |
 | Drag the frog | You pick him up; let go and he falls down (and complains) |
-| Right-click the frog | Menu: AI quips, croak sound, mouse chasing, reminders, pranks, personality, API key, quit |
+| Right-click the frog | Menu: AI quips, jokes, croak sound, mouse chasing, reminders, pranks, personality, API key, quit |
 
 He walks along the bottom of **all your monitors** and hops from one to the next.
 
@@ -78,6 +78,14 @@ Every prank has its own checkbox. The frog remembers your choice.
 - If that folder is empty, he puts a few fun files in it.
 - He never deletes or overwrites anything.
 - When you quit, hidden icons and minimized windows come back immediately.
+
+## Jokes from the internet
+
+While the AI quips are off, the frog now and then tells a German joke from
+[JokeAPI](https://v2.jokeapi.dev). Only "safe" jokes are used, and jokes that are too long for
+the speech bubble are skipped. Without internet he simply uses his built-in list.
+
+Switch it on or off in the right-click menu: "Witze aus dem Internet".
 
 ## Quips from Claude (AI)
 

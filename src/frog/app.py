@@ -14,6 +14,7 @@ from frog import api_key, storage
 from frog.actions import Action, all_actions, pick_action
 from frog.ai_quips import DEFAULT_PERSONALITY, AiQuipSource, ai_available
 from frog.config import Settings
+from frog.jokes import JokeSource
 from frog.model import Frog, State
 from frog.pixel_art import HEIGHT, MOUTH_ROW, WIDTH
 from frog.quips import QuipPicker
@@ -28,6 +29,7 @@ log = logging.getLogger(__name__)
 RESUME_AFTER_ACTION_MS = 2000
 DRAG_THRESHOLD = 6  # Pixels the mouse must move before a click becomes a drag
 GRAB_PADDING = 10  # Pixels around the frog that still count as "on the frog"
+READING_CHARS_PER_S = 15  # Speech bubbles stay long enough to read
 SCREENS_REFRESH_S = 30.0  # Monitors can be plugged in or out while the frog runs
 # Random actions and reactions only happen while the frog is visible and not busy.
 STATES_FOR_ACTIONS = frozenset({State.WALKING, State.RESTING})
@@ -49,8 +51,13 @@ class FrogApp:
         )
 
         saved = storage.load()
-        self.quips = AiQuipSource(
+        self.jokes = JokeSource(
             fallback=QuipPicker(rng=self.rng),
+            enabled=saved.get("jokes", True),
+            rng=self.rng,
+        )
+        self.quips = AiQuipSource(
+            fallback=self.jokes,
             model=settings.ai_model,
             enabled=saved.get("ai_quips", settings.ai_quips_enabled),
             personality=saved.get("personality", ""),
@@ -90,6 +97,7 @@ class FrogApp:
         self.window.build_menu(
             switches=[
                 MenuSwitch("Sprüche von Claude", self.quips.enabled, self.toggle_ai),
+                MenuSwitch("Witze aus dem Internet", self.jokes.enabled, self.toggle_jokes),
                 MenuSwitch("Quak-Ton", self.sound.enabled, self.toggle_sound),
                 MenuSwitch("Maus jagen", self.chase.enabled, self.toggle_chase),
                 MenuSwitch("Erinnerungen", self.reminders.enabled, self.toggle_reminders),
@@ -111,7 +119,9 @@ class FrogApp:
         self.sound.play()
         if self._bubble_job:
             self.window.cancel(self._bubble_job)
-        duration_ms = int(self.settings.speech_bubble_s * 1000)
+        # Long texts like jokes stay a little longer
+        duration_s = max(self.settings.speech_bubble_s, len(text) / READING_CHARS_PER_S)
+        duration_ms = int(duration_s * 1000)
         self._bubble_job = self.window.later(duration_ms, self._clear_bubble)
 
     def later(self, milliseconds: int, task: Callable[[], None]) -> str:
@@ -154,6 +164,15 @@ class FrogApp:
         else:
             log.warning("AI quips unavailable: %s", reason)
             self.say("Mir fehlt der Schlüssel. Rechtsklick: API-Schlüssel eingeben.")
+
+    def toggle_jokes(self, on: bool) -> None:
+        self.jokes.enabled = on
+        storage.update(jokes=on)
+        if on:
+            self.jokes.prefetch()
+            self.say("Ich kenn da einen Witz ... wenn die KI aus ist.")
+        else:
+            self.say("Keine Witze mehr. Der Ernst des Lebens beginnt.")
 
     def toggle_chase(self, on: bool) -> None:
         self.chase.enabled = on
@@ -211,6 +230,7 @@ class FrogApp:
             available, reason = ai_available()
             log.info("AI quips: %s", "on" if available else f"off ({reason})")
         self.quips.prefetch()
+        self.jokes.prefetch()
         self.say("Hallo! Ich bin da.")
         self._tick()
         self.window.run()
