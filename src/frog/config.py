@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
-PROJECT_SRC = Path(__file__).resolve().parents[1]
+# Folder that holds `sounds/`. In the single-file .exe (PyInstaller) the files
+# are unpacked into a temporary folder named in `sys._MEIPASS`.
+RESOURCES = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parents[1]))
 
 
 @dataclass(frozen=True)
@@ -43,7 +46,7 @@ class Settings:
 
     # Sound
     sound_enabled: bool = True  # Initial value; the context menu remembers the user's choice
-    sound_file: Path = field(default_factory=lambda: PROJECT_SRC / "sounds" / "frog-sound.mp3")
+    sound_file: Path = field(default_factory=lambda: RESOURCES / "sounds" / "frog-sound.mp3")
     sound_duration_ms: int = 1000  # Only play the start; the file is 8 seconds long
 
     # Quips from Claude (needs ANTHROPIC_API_KEY, otherwise the built-in list is used)
