@@ -81,6 +81,25 @@ def test_invalid_key_blocks_ai():
     assert not source.active
 
 
+def test_new_key_unblocks_ai():
+    request = httpx2.Request("POST", "https://api.anthropic.com/v1/messages")
+    response = httpx2.Response(401, request=request)
+    replies = iter([anthropic.AuthenticationError("invalid", response=response, body=None)])
+
+    def fetch():
+        error = next(replies, None)
+        if error:
+            raise error
+        return ["AI quip"]
+
+    source = make_source(fetch)
+    source.next_quip()
+    assert not source.active
+    source.key_changed()
+    assert source.active
+    assert source.next_quip() == "AI quip"
+
+
 def test_enabling_while_running():
     source = make_source(lambda: ["AI quip"], enabled=False)
     assert source.next_quip() == "from the list"

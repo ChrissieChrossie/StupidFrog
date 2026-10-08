@@ -160,6 +160,12 @@ class AiQuipSource:
         self._paused_until = 0.0
         self.prefetch()
 
+    def key_changed(self) -> None:
+        """A new API key was entered: try Claude again right away."""
+        self._blocked = False
+        self._paused_until = 0.0
+        self.prefetch()
+
     def prefetch(self) -> None:
         """Fetch quips ahead of time, before the first one is needed."""
         if self.active:

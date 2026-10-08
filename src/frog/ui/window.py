@@ -83,9 +83,10 @@ class FrogWindow:
         switches: list[MenuSwitch],
         pranks: list[MenuSwitch],
         on_personality: Callable[[], None],
+        on_api_key: Callable[[], None],
         on_quit: Callable[[], None],
     ) -> None:
-        """Right-click menu: switches, a "Streiche" submenu, personality and quit."""
+        """Right-click menu: switches, a "Streiche" submenu, personality, API key and quit."""
         menu = tk.Menu(self.root, tearoff=0)
         for switch in switches:
             self._add_switch(menu, switch)
@@ -96,6 +97,7 @@ class FrogWindow:
         menu.add_cascade(label="Streiche", menu=prank_menu)
 
         menu.add_command(label="Charakter beschreiben ...", command=on_personality)
+        menu.add_command(label="API-Schlüssel eingeben ...", command=on_api_key)
         menu.add_separator()
         menu.add_command(label="Tschüss (beenden)", command=on_quit)
         self.canvas.bind("<Button-3>", lambda e: menu.tk_popup(e.x_root, e.y_root))
@@ -132,6 +134,34 @@ class FrogWindow:
             on_save(entry.get("1.0", "end").strip())
             dialog.destroy()
 
+        buttons = tk.Frame(dialog)
+        buttons.pack(padx=12, pady=12, anchor="e")
+        tk.Button(buttons, text="Abbrechen", command=dialog.destroy).pack(side="right")
+        tk.Button(buttons, text="Speichern", command=save).pack(side="right", padx=6)
+
+    def api_key_dialog(self, current: str, on_save: Callable[[str], None]) -> None:
+        """Small dialog to enter the Anthropic API key. The key is hidden while typing."""
+        dialog = tk.Toplevel(self.root)
+        dialog.title("API-Schlüssel")
+        dialog.attributes("-topmost", True)
+        dialog.resizable(False, False)
+
+        info = "Füge deinen Schlüssel von console.anthropic.com ein."
+        if current:
+            info += f"\nGespeichert ist: {current}\nLeer lassen und Speichern = Schlüssel löschen."
+        tk.Label(dialog, text=info, font=UI_FONT, justify="left").pack(
+            padx=12, pady=(12, 6), anchor="w"
+        )
+
+        entry = tk.Entry(dialog, width=50, show="•", font=UI_FONT)
+        entry.pack(padx=12, fill="x")
+        entry.focus_set()
+
+        def save() -> None:
+            on_save(entry.get())
+            dialog.destroy()
+
+        entry.bind("<Return>", lambda _e: save())
         buttons = tk.Frame(dialog)
         buttons.pack(padx=12, pady=12, anchor="e")
         tk.Button(buttons, text="Abbrechen", command=dialog.destroy).pack(side="right")
