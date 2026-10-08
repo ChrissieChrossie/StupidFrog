@@ -20,6 +20,22 @@ Then start him with `start.bat`.
 If `py` is not found, Python is missing: `winget install Python.Python.3.12`,
 then reopen PowerShell.
 
+## Single .exe (no installation)
+
+`StupidFrog.exe` is one file with Python and everything else inside.
+Copy it anywhere and double-click it. Nothing needs to be installed.
+
+**Get it from GitHub:** every push to `main` builds it automatically.
+Open the repository on GitHub, then "Actions" → "Build exe" → latest run → "Artifacts".
+For a proper download page, push a tag such as `v1.0.0`; the .exe is then attached to a release.
+
+**Build it yourself:** double-click `build.bat`. The result is `dist\StupidFrog.exe`.
+
+Notes:
+- The .exe has no console window. Its log is written to `~/.frog/frog.log`.
+- Windows SmartScreen may warn about an unknown app the first time: "More info" → "Run anyway".
+- AI quips still need the `ANTHROPIC_API_KEY` environment variable (see below).
+
 ## Controls
 
 | You do | What happens |

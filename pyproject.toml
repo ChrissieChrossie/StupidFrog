@@ -12,6 +12,7 @@ dependencies = ["anthropic>=1.0"]  # For quips from Claude (optional at runtime)
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.6"]
+build = ["pyinstaller>=6.10"]
 
 [project.scripts]
 frog = "frog.__main__:main"
