@@ -27,7 +27,7 @@ Copy it anywhere and double-click it. Nothing needs to be installed.
 
 **Get it from GitHub:** every push to `main` builds it automatically.
 Open the repository on GitHub, then "Actions" → "Build exe" → latest run → "Artifacts".
-For a proper download page, push a tag such as `v1.0.0`; the .exe is then attached to a release.
+For a proper download page, push a tag such as `0.3.0`; the .exe is then attached to that release.
 
 **Build it yourself:** double-click `build.bat`. The result is `dist\StupidFrog.exe`.
 
